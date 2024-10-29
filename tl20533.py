@@ -3,8 +3,8 @@ import timeit
 size=10
 Left=size-size
 Right=size-1
-#A=[random.randint(1,500)for i in range(size)]
-A=[9,15,73,76,80,84,90,92,95,99]
+A=[random.randint(1,500)for i in range(size)]
+#A=[9,15,73,76,80,84,90,92,95,99]
 def quicksort(left,right):
 	if (left<right):
 		i=left
