@@ -29,9 +29,7 @@ def quicksort(left,right):
 		A[left]=l
 		quicksort(left,j-1)
 		quicksort(j+1,right)
-
 print(A)
-
 timer=timeit.timeit(lambda:quicksort(Left,Right),number=100)
 print(A)
 print(timer)
