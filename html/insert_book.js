@@ -32,6 +32,7 @@ function validateForm() {
     // Validate categories
     if (categories.length > 3) {
         errors.push({ field: "categories", message: "You can select up to 3 categories." });
+        alert("You can select up to 3 categories.");
     }
 
     // Highlight errors
