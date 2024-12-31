@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 15 Δεκ 2024 στις 20:13:38
+-- Χρόνος δημιουργίας: 31 Δεκ 2024 στις 20:10:51
 -- Έκδοση διακομιστή: 10.4.32-MariaDB
 -- Έκδοση PHP: 8.2.12
 
@@ -11,106 +11,190 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT;
-SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS;
-SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION;
-SET NAMES utf8mb4;
 
--- Βάση δεδομένων: `e-books`
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Βάση δεδομένων: `e_books`
+--
 
 -- --------------------------------------------------------
 
+--
 -- Δομή πίνακα για τον πίνακα `book`
+--
 
 CREATE TABLE `book` (
-  `BookID` int(11) NOT NULL AUTO_INCREMENT,
+  `BookID` int(11) NOT NULL,
   `Title` varchar(255) NOT NULL,
   `Description` text DEFAULT NULL,
   `YearOfPublication` year(4) DEFAULT NULL,
   `NumberOfCopies` int(11) DEFAULT NULL,
-  `cond` enum('New','Used','Unknown') DEFAULT 'New',
-  PRIMARY KEY (`BookID`)
+  `cond` enum('New','Used','Unknown') DEFAULT 'New'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
 -- Άδειασμα δεδομένων του πίνακα `book`
+--
 
 INSERT INTO `book` (`BookID`, `Title`, `Description`, `YearOfPublication`, `NumberOfCopies`, `cond`) VALUES
 (1, 'Mickey Mouse and Friends', 'This is a sample book description.', '1952', 5, 'Used');
 
 -- --------------------------------------------------------
 
+--
 -- Δομή πίνακα για τον πίνακα `borrow`
+--
 
 CREATE TABLE `borrow` (
-  `BorrowID` int(11) NOT NULL AUTO_INCREMENT,
+  `BorrowID` int(11) NOT NULL,
   `BookID` int(11) DEFAULT NULL,
   `BorrowDate` date NOT NULL,
-  `ReturnDate` date DEFAULT NULL,
-  PRIMARY KEY (`BorrowID`),
-  CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`) ON DELETE CASCADE
+  `ReturnDate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
+--
 -- Δομή πίνακα για τον πίνακα `category`
+--
 
 CREATE TABLE `category` (
-  `CategoryID` int(11) NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) NOT NULL,
-  PRIMARY KEY (`CategoryID`),
-  UNIQUE KEY `Name` (`Name`)
+  `CategoryID` int(11) NOT NULL,
+  `Name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
 -- Άδειασμα δεδομένων του πίνακα `category`
+--
 
 INSERT INTO `category` (`CategoryID`, `Name`) VALUES
 (1, 'Children Books'),
 (3, 'Comedy'),
-(4, 'Philosophy'),
-(2, 'Romance'),
 (5, 'Drama'),
-(6, 'Other');
+(6, 'Other'),
+(4, 'Philosophy'),
+(2, 'Romance');
 
--- Δομή πίνακα για τους επαφές `Contacts`
+-- --------------------------------------------------------
 
-CREATE TABLE `Contacts` (
-    `ContactID` INT AUTO_INCREMENT PRIMARY KEY,
-    `Name` VARCHAR(100) NOT NULL,
-    `Role` VARCHAR(100) NOT NULL
+--
+-- Δομή πίνακα για τον πίνακα `contactmessages`
+--
+
+CREATE TABLE `contactmessages` (
+  `MessageID` int(11) NOT NULL,
+  `Name` varchar(100) NOT NULL,
+  `Email` varchar(100) NOT NULL,
+  `Message` text NOT NULL,
+  `SubmittedAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Άδειασμα δεδομένων του πίνακα `Contacts`
+-- --------------------------------------------------------
 
-INSERT INTO `Contacts` (`Name`, `Role`) VALUES 
-('Theodoros Gkiliopoulos', 'TL20533'),
-('Pavlos Antwnidakhs', 'TL20483'),
-('Panagiwths Kouzhs', 'TL20411');
+--
+-- Δομή πίνακα για τον πίνακα `contacts`
+--
 
--- Δομή πίνακα για τα μηνύματα επαφής `ContactMessages`
-
-CREATE TABLE `ContactMessages` (
-    `MessageID` INT AUTO_INCREMENT PRIMARY KEY,
-    `Name` VARCHAR(100) NOT NULL,
-    `Email` VARCHAR(100) NOT NULL,
-    `Message` TEXT NOT NULL,
-    `SubmittedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE `contacts` (
+  `ContactID` int(11) NOT NULL,
+  `Name` varchar(100) NOT NULL,
+  `Role` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Άδειασμα δεδομένων του πίνακα `contacts`
+--
+
+INSERT INTO `contacts` (`ContactID`, `Name`, `Role`) VALUES
+(1, 'Theodoros Gkiliopoulos', 'TL20533'),
+(2, 'Pavlos Antwnidakhs', 'TL20483'),
+(3, 'Panagiwths Kouzhs', 'TL20411');
+
+--
 -- Ευρετήρια για άχρηστους πίνακες
+--
 
--- Εφαρμογή primary key και auto-increment για πίνακες
+--
+-- Ευρετήρια για πίνακα `book`
+--
+ALTER TABLE `book`
+  ADD PRIMARY KEY (`BookID`);
 
+--
+-- Ευρετήρια για πίνακα `borrow`
+--
+ALTER TABLE `borrow`
+  ADD PRIMARY KEY (`BorrowID`),
+  ADD KEY `borrow_ibfk_1` (`BookID`);
+
+--
+-- Ευρετήρια για πίνακα `category`
+--
+ALTER TABLE `category`
+  ADD PRIMARY KEY (`CategoryID`),
+  ADD UNIQUE KEY `Name` (`Name`);
+
+--
+-- Ευρετήρια για πίνακα `contactmessages`
+--
+ALTER TABLE `contactmessages`
+  ADD PRIMARY KEY (`MessageID`);
+
+--
+-- Ευρετήρια για πίνακα `contacts`
+--
+ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`ContactID`);
+
+--
+-- AUTO_INCREMENT για άχρηστους πίνακες
+--
+
+--
+-- AUTO_INCREMENT για πίνακα `book`
+--
 ALTER TABLE `book`
   MODIFY `BookID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
+--
+-- AUTO_INCREMENT για πίνακα `borrow`
+--
 ALTER TABLE `borrow`
   MODIFY `BorrowID` int(11) NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT για πίνακα `category`
+--
 ALTER TABLE `category`
-  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
+--
+-- AUTO_INCREMENT για πίνακα `contactmessages`
+--
+ALTER TABLE `contactmessages`
+  MODIFY `MessageID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT για πίνακα `contacts`
+--
+ALTER TABLE `contacts`
+  MODIFY `ContactID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- Περιορισμοί για άχρηστους πίνακες
+--
+
+--
+-- Περιορισμοί για πίνακα `borrow`
+--
+ALTER TABLE `borrow`
+  ADD CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`) ON DELETE CASCADE;
 COMMIT;
 
-SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT;
-SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS;
-SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
