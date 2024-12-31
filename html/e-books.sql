@@ -16,59 +16,52 @@ SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS;
 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION;
 SET NAMES utf8mb4;
 
---
 -- Βάση δεδομένων: `e-books`
---
 
 -- --------------------------------------------------------
 
---
 -- Δομή πίνακα για τον πίνακα `book`
---
 
 CREATE TABLE `book` (
-  `BookID` int(11) NOT NULL,
+  `BookID` int(11) NOT NULL AUTO_INCREMENT,
   `Title` varchar(255) NOT NULL,
   `Description` text DEFAULT NULL,
   `YearOfPublication` year(4) DEFAULT NULL CHECK (`YearOfPublication` between 1900 and 2024),
   `NumberOfCopies` int(11) DEFAULT NULL CHECK (`NumberOfCopies` > 0),
-  `cond` enum('New','Used','Unknown') DEFAULT 'New'
+  `cond` enum('New','Used','Unknown') DEFAULT 'New',
+  PRIMARY KEY (`BookID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
 -- Άδειασμα δεδομένων του πίνακα `book`
---
 
 INSERT INTO `book` (`BookID`, `Title`, `Description`, `YearOfPublication`, `NumberOfCopies`, `cond`) VALUES
 (1, 'Mickey Mouse and Friends', 'This is a sample book description.', '1952', 5, 'Used');
 
 -- --------------------------------------------------------
 
---
 -- Δομή πίνακα για τον πίνακα `borrow`
---
 
 CREATE TABLE `borrow` (
-  `BorrowID` int(11) NOT NULL,
+  `BorrowID` int(11) NOT NULL AUTO_INCREMENT,
   `BookID` int(11) DEFAULT NULL,
   `BorrowDate` date NOT NULL,
-  `ReturnDate` date DEFAULT NULL
+  `ReturnDate` date DEFAULT NULL,
+  PRIMARY KEY (`BorrowID`),
+  CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
---
 -- Δομή πίνακα για τον πίνακα `category`
---
 
 CREATE TABLE `category` (
-  `CategoryID` int(11) NOT NULL,
-  `Name` varchar(100) NOT NULL
+  `CategoryID` int(11) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(100) NOT NULL,
+  PRIMARY KEY (`CategoryID`),
+  UNIQUE KEY `Name` (`Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
 -- Άδειασμα δεδομένων του πίνακα `category`
---
 
 INSERT INTO `category` (`CategoryID`, `Name`) VALUES
 (1, 'Children Books'),
@@ -78,81 +71,44 @@ INSERT INTO `category` (`CategoryID`, `Name`) VALUES
 (5, 'Drama'),
 (6, 'Other');
 
-CREATE TABLE Contacts (
-    ContactID INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(100) NOT NULL,
-    Role VARCHAR(100) NOT NULL
+-- Δομή πίνακα για τους επαφές `Contacts`
+
+CREATE TABLE `Contacts` (
+    `ContactID` INT AUTO_INCREMENT PRIMARY KEY,
+    `Name` VARCHAR(100) NOT NULL,
+    `Role` VARCHAR(100) NOT NULL
 );
 
-INSERT INTO Contacts (Name, Role) VALUES 
+-- Άδειασμα δεδομένων του πίνακα `Contacts`
+
+INSERT INTO `Contacts` (`Name`, `Role`) VALUES 
 ('Theodoros Gkiliopoulos', 'TL20533'),
 ('Pavlos Antwnidakhs', 'TL20483'),
 ('Panagiwths Kouzhs', 'TL20411');
 
-CREATE TABLE ContactMessages (
-    MessageID INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(100) NOT NULL,
-    Email VARCHAR(100) NOT NULL,
-    Message TEXT NOT NULL,
-    SubmittedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Δομή πίνακα για τα μηνύματα επαφής `ContactMessages`
+
+CREATE TABLE `ContactMessages` (
+    `MessageID` INT AUTO_INCREMENT PRIMARY KEY,
+    `Name` VARCHAR(100) NOT NULL,
+    `Email` VARCHAR(100) NOT NULL,
+    `Message` TEXT NOT NULL,
+    `SubmittedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
---
 -- Ευρετήρια για άχρηστους πίνακες
---
 
---
--- Ευρετήρια για πίνακα `book`
---
-ALTER TABLE `book`
-  ADD PRIMARY KEY (`BookID`);
+-- Εφαρμογή primary key και auto-increment για πίνακες
 
---
--- Ευρετήρια για πίνακα `borrow`
---
-ALTER TABLE `borrow`
-  ADD PRIMARY KEY (`BorrowID`),
-  ADD KEY `BookID` (`BookID`);
-
---
--- Ευρετήρια για πίνακα `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`CategoryID`),
-  ADD UNIQUE KEY `Name` (`Name`);
-
---
--- AUTO_INCREMENT για άχρηστους πίνακες
---
-
---
--- AUTO_INCREMENT για πίνακα `book`
---
 ALTER TABLE `book`
   MODIFY `BookID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT για πίνακα `borrow`
---
 ALTER TABLE `borrow`
   MODIFY `BorrowID` int(11) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT για πίνακα `category`
---
 ALTER TABLE `category`
   MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- Περιορισμοί για άχρηστους πίνακες
---
-
---
--- Περιορισμοί για πίνακα `borrow`
---
-ALTER TABLE `borrow`
-  ADD CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`) ON DELETE CASCADE;
 COMMIT;
 
 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT;
