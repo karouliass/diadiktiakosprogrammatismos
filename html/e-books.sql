@@ -26,11 +26,11 @@ CREATE TABLE `book` (
   `BookID` int(11) NOT NULL AUTO_INCREMENT,
   `Title` varchar(255) NOT NULL,
   `Description` text DEFAULT NULL,
-  `YearOfPublication` year(4) DEFAULT NULL CHECK (`YearOfPublication` between 1900 and 2024),
-  `NumberOfCopies` int(11) DEFAULT NULL CHECK (`NumberOfCopies` > 0),
+  `YearOfPublication` year(4) DEFAULT NULL,
+  `NumberOfCopies` int(11) DEFAULT NULL,
   `cond` enum('New','Used','Unknown') DEFAULT 'New',
   PRIMARY KEY (`BookID`)
-) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Άδειασμα δεδομένων του πίνακα `book`
 
@@ -48,7 +48,7 @@ CREATE TABLE `borrow` (
   `ReturnDate` date DEFAULT NULL,
   PRIMARY KEY (`BorrowID`),
   CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`) ON DELETE CASCADE
-) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -59,7 +59,7 @@ CREATE TABLE `category` (
   `Name` varchar(100) NOT NULL,
   PRIMARY KEY (`CategoryID`),
   UNIQUE KEY `Name` (`Name`)
-) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Άδειασμα δεδομένων του πίνακα `category`
 
@@ -77,7 +77,7 @@ CREATE TABLE `Contacts` (
     `ContactID` INT AUTO_INCREMENT PRIMARY KEY,
     `Name` VARCHAR(100) NOT NULL,
     `Role` VARCHAR(100) NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Άδειασμα δεδομένων του πίνακα `Contacts`
 
@@ -94,7 +94,7 @@ CREATE TABLE `ContactMessages` (
     `Email` VARCHAR(100) NOT NULL,
     `Message` TEXT NOT NULL,
     `SubmittedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Ευρετήρια για άχρηστους πίνακες
 
