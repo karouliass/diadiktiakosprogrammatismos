@@ -30,7 +30,7 @@ CREATE TABLE `book` (
   `NumberOfCopies` int(11) DEFAULT NULL CHECK (`NumberOfCopies` > 0),
   `cond` enum('New','Used','Unknown') DEFAULT 'New',
   PRIMARY KEY (`BookID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) 
 
 -- Άδειασμα δεδομένων του πίνακα `book`
 
@@ -48,7 +48,7 @@ CREATE TABLE `borrow` (
   `ReturnDate` date DEFAULT NULL,
   PRIMARY KEY (`BorrowID`),
   CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) 
 
 -- --------------------------------------------------------
 
@@ -59,7 +59,7 @@ CREATE TABLE `category` (
   `Name` varchar(100) NOT NULL,
   PRIMARY KEY (`CategoryID`),
   UNIQUE KEY `Name` (`Name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) 
 
 -- Άδειασμα δεδομένων του πίνακα `category`
 
