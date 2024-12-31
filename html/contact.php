@@ -25,10 +25,10 @@
                         placeholder="Search here" 
                         style="margin-top: 8px; margin-left: 10px; display: inline-block; width: auto;">
                 </li>
-                <li><a href="./lend_book.html">Lend Book</a></li>
-                <li><a href="./return_book.html">Return Book</a></li>
-                <li><a href="./insert_book.html">Insert Book</a></li>
-                <li><a href="./contact.html"><strong>Contact Us</strong></a></li>
+                <li><a href="./lend_book.php">Lend Book</a></li>
+                <li><a href="./return_book.php">Return Book</a></li>
+                <li><a href="./insert_book.php">Insert Book</a></li>
+                <li><a href="./contact.php"><strong>Contact Us</strong></a></li>
             </ul>
         </div>
     </nav>
@@ -39,13 +39,13 @@
             
         </div>
         <div>
-            <p>Theodoros Gkiliopoulos TL20533 6912345678</p>
+            <p>Theodoros Gkiliopoulos TL20533</p>
         </div>
         <div>
-            <p>Pavlos Antwnidakhs TL20483 6912345678</p>
+            <p>Pavlos Antwnidakhs TL20483</p>
         </div>
         <div>
-            <p>Panagiwths Kouzhs TL20411 6912345678</p>
+            <p>Panagiwths Kouzhs TL20411</p>
         </div>
     </div>
 </body>

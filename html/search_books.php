@@ -1,3 +1,28 @@
+<?php
+include 'db_connect.php';
+
+$searchTerm = isset($_GET["query"]) ? $conn->real_escape_string($_GET["query"]) : ''; // Get search query from URL or form
+
+// Query the database for books that match the search term
+$sql = "SELECT * FROM Book WHERE Title LIKE '%$searchTerm%'";
+
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<div>";
+        echo "<h3>" . htmlspecialchars($row["Title"]) . "</h3>";
+        echo "<p>" . htmlspecialchars($row["Description"]) . "</p>";
+        echo "<p>Year: " . $row["YearOfPublication"] . "</p>";
+        echo "</div>";
+    }
+} else {
+    echo "No books found.";
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html>
 <head>

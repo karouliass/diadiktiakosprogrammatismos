@@ -25,10 +25,10 @@
                         placeholder="Search here" 
                         style="margin-top: 8px; margin-left: 10px; display: inline-block; width: auto;">
                 </li>
-                <li><a href="./lend_book.html">Lend Book</a></li>
-                <li><a href="./return_book.html"><strong>Return Book</strong></a></li>
-                <li><a href="./insert_book.html">Insert Book</a></li>
-                <li><a href="./contact.html">Contact Us</a></li>
+                <li><a href="./lend_book.php">Lend Book</a></li>
+                <li><a href="./return_book.php"><strong>Return Book</strong></a></li>
+                <li><a href="./insert_book.php">Insert Book</a></li>
+                <li><a href="./contact.php">Contact Us</a></li>
             </ul>
         </div>
     </nav>
