@@ -78,6 +78,26 @@ INSERT INTO `category` (`CategoryID`, `Name`) VALUES
 (5, 'Drama'),
 (6, 'Other');
 
+CREATE TABLE Contacts (
+    ContactID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Role VARCHAR(100) NOT NULL
+);
+
+INSERT INTO Contacts (Name, Role) VALUES 
+('Theodoros Gkiliopoulos', 'TL20533'),
+('Pavlos Antwnidakhs', 'TL20483'),
+('Panagiwths Kouzhs', 'TL20411');
+
+CREATE TABLE ContactMessages (
+    MessageID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    Message TEXT NOT NULL,
+    SubmittedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 --
 -- Ευρετήρια για άχρηστους πίνακες
 --

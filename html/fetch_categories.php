@@ -14,4 +14,3 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
-// Compare this snippet from diadiktiakosprogrammatismos/html/insert_book.js:
