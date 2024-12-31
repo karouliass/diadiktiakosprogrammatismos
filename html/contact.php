@@ -4,8 +4,6 @@
     <title>Contact Us</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
-
 </head>
 <body>
     <!-- Navbar -->
@@ -17,10 +15,12 @@
             </div>
             <!-- Navigation links -->
             <ul class="nav navbar-nav">
-                <li><a href="./index.html">Home</a></li>
+                <li><a href="./index.php">Home</a></li>
                 <li>
+                    <label for="search-bar" class="sr-only">Search</label>
                     <input 
                         type="text" 
+                        id="search-bar" 
                         class="form-control navbar-input" 
                         placeholder="Search here" 
                         style="margin-top: 8px; margin-left: 10px; display: inline-block; width: auto;">
@@ -35,17 +35,12 @@
 
     <div class="container">
         <div class="jumbotron">
-            <h1>Stoixeia epikoinwnias :</h1>
-            
+            <h1>Contact Information</h1>
         </div>
         <div>
-            <p>Theodoros Gkiliopoulos TL20533</p>
-        </div>
-        <div>
-            <p>Pavlos Antwnidakhs TL20483</p>
-        </div>
-        <div>
-            <p>Panagiwths Kouzhs TL20411</p>
+            <p><strong>Name:</strong> Theodoros Gkiliopoulos (TL20533)</p>
+            <p><strong>Name:</strong> Pavlos Antwnidakhs (TL20483)</p>
+            <p><strong>Name:</strong> Panagiwths Kouzhs (TL20411)</p>
         </div>
     </div>
 </body>
