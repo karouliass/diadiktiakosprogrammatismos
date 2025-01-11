@@ -3,8 +3,8 @@ include 'db_connect.php';
 
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = $conn->real_escape_string(trim($_POST['Title'])); // Use the Title field as input
-    $borrowerName = $conn->real_escape_string(trim($_POST['borrower_name'])); // Borrower name
+    $title = $conn->real_escape_string(trim($_POST['Title']));
+    $borrowerName = $conn->real_escape_string(trim($_POST['borrower_name']));
 
     // Validate inputs
     if (empty($title) || empty($borrowerName)) {
@@ -17,21 +17,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result && $result->num_rows > 0) {
             $book = $result->fetch_assoc();
             $bookID = $book['BookID'];
-            // Update the book's status and decrement copies
-            $updateQuery = "UPDATE Book SET NumberOfCopies = NumberOfCopies - 1 WHERE BookID = $bookID";
-            $result = $conn->query($updateQuery);
-            $borrowerInfo = 'INSERT INTO contacts (Name, Role) VALUES ($borrowerName, "Guest")';
-            $borrowResult = $conn->query($borrowerInfo);
-            if ($result===TRUE ) {
-                $success = "Book successfully borrowed by $borrowerName./nReturn Date: In two weeks!";
-            } else {
+
+            // Transaction to ensure consistency
+            $conn->begin_transaction();
+            try {
+                // Decrement book copies
+                $updateQuery = "UPDATE Book SET NumberOfCopies = NumberOfCopies - 1 WHERE BookID = $bookID";
+                $conn->query($updateQuery);
+
+                // Insert borrower information
+                $borrowerInfo = "INSERT INTO contacts (Name, Role) VALUES ('$borrowerName', 'Guest')";
+                $borrowResult = $conn->query($borrowerInfo);
+                $contactId = $conn->insert_id;
+                // Calculate return date
+                $returnDate = date('Y-m-d', strtotime('+2 weeks'));
+                $success = "Book successfully borrowed by $borrowerName. Return Date: $contactId.";
+
+                $borrowInfo = "INSERT INTO borrow (BookID, contactId, ReturnDate) VALUES ($bookID, '$contactId','$borrowerName', '$returnDate')";
+                $borrowResult = $conn->query($borrowInfo);
+                $conn->commit();
+            } catch (Exception $e) {
+                $conn->rollback();
                 $error = "Error borrowing book: " . $conn->error;
             }
-
+        } else {
+            $error = "Book is not available or does not exist.";
         }
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
