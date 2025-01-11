@@ -2,42 +2,54 @@
 include 'db_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = $conn->real_escape_string(trim($_POST["title"]));
-    $description = $conn->real_escape_string(trim($_POST["description"]));
+    $title = trim($_POST["title"]);
+    $description = trim($_POST["description"]);
     $year = intval($_POST["year"]);
     $copies = intval($_POST["copies"]);
-    $condition = $conn->real_escape_string($_POST["condition"]);
-    $categories = $_POST["categories"]; // Array of selected categories
+    $condition = $_POST["condition"];
+    $categories = isset($_POST["categories"]) ? $_POST["categories"] : []; // Ensure categories exist
 
     // Validate input
-    if (empty($title) || empty($description) || $year < 1900 || $year > 2024 || $copies <= 0 || empty($categories)) {
+    if (empty($title) || empty($description) || $year < 1900 || $year > 2024 || $copies <= 0 || empty($categories) || $categories < 4 ) {
         $error = "Invalid form data. Please check your inputs.";
         header("Location: insert_book.php?error=" . urlencode($error));
         exit;
     }
 
-    // Insert book into the Book table
-    $sql = "INSERT INTO Book (Title, Description, YearOfPublication, NumberOfCopies, Condition)
-            VALUES ('$title', '$description', $year, $copies, '$condition')";
+    // Start a transaction
+    $conn->begin_transaction();
+    try {
+        // Insert book into the Book table
+        $stmt = $conn->prepare("INSERT INTO Book (Title, Description, YearOfPublication, NumberOfCopies, cond) 
+                                VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssiis", $title, $description, $year, $copies, $condition); 
+        $stmt->execute();
 
-    if ($conn->query($sql) === TRUE) {
         $bookID = $conn->insert_id; // Get the ID of the inserted book
 
         // Insert categories into the BookCategory table
+        $stmt = $conn->prepare("INSERT INTO BookCategory (BookID, CategoryID) VALUES (?, ?)");
         foreach ($categories as $categoryID) {
             $categoryID = intval($categoryID); // Ensure it's numeric
-            $conn->query("INSERT INTO BookCategory (BookID, CategoryID) VALUES ($bookID, $categoryID)");
+            $stmt->bind_param("ii", $bookID, $categoryID);
+            $stmt->execute();
         }
 
+        // Commit the transaction
+        $conn->commit();
         header("Location: insert_book.php?success=1");
         exit;
-    } else {
-        $error = "Error inserting book: " . $conn->error;
+    } catch (Exception $e) {
+        // Roll back the transaction on error
+        $conn->rollback();
+        error_log("Error inserting book: " . $e->getMessage()); // Log the error
+        $error = "An error occurred while adding the book. Please try again.";
         header("Location: insert_book.php?error=" . urlencode($error));
         exit;
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,8 +59,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="insert_book.js"></script>
     <title>Insert Book</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="js/form-validation.js" defer></script>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -56,10 +70,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <ul class="nav navbar-nav">
                 <li><a href="./index.php">Home</a></li>
+                <li>
+                    <form class="navbar-form" method="GET" action="search_books.php">
+                        <div class="form-group">
+                            <label for="search-bar" class="sr-only">Search</label>
+                            <input 
+                                type="text" 
+                                id="search-bar" 
+                                name="query"
+                                class="form-control" 
+                                placeholder="Search here">
+                        </div>
+                        <button type="submit" class="btn btn-default">Search</button>
+                    </form>
+                </li>
                 <li><a href="./lend_book.php">Lend Book</a></li>
                 <li><a href="./return_book.php">Return Book</a></li>
                 <li><a href="./insert_book.php"><strong>Insert Book</strong></a></li>
-                <li><a href="./contact.php">Contact Us</a></li>
+                <li><a href="./contact.php" class="active">Contact Us</a></li>
             </ul>
         </div>
     </nav>
@@ -78,26 +106,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form id="insertBookForm" method="POST" action="insert_book.php" onsubmit="return validateForm();">
             <div class="form-group">
                 <label for="title">Title:</label>
-                <input type="text" class="form-control" id="title" name="title" onmouseover="showTooltip(this, 'Enter the title of the book.')">
+                <input type="text" class="form-control" id="title" name="title" required>
             </div>
             <div class="form-group">
                 <label for="description">Description:</label>
-                <textarea class="form-control" id="description" name="description" maxlength="300" onmouseover="showTooltip(this, 'Enter a description (max 300 characters).')"></textarea>
+                <textarea class="form-control" id="description" name="description" maxlength="300"></textarea>
             </div>
             <div class="form-group">
                 <label for="year">Year of Publication:</label>
-                <input type="number" class="form-control" id="year" name="year" onmouseover="showTooltip(this, 'Enter the year (1900-2024).')">
+                <input type="number" class="form-control" id="year" name="year">
             </div>
             <div class="form-group">
                 <label for="copies">Number of Copies:</label>
-                <input type="number" class="form-control" id="copies" name="copies" onmouseover="showTooltip(this, 'Enter the number of copies (must be > 0).')">
+                <input type="number" class="form-control" id="copies" name="copies">
             </div>
             <div class="form-group">
                 <label for="condition">Condition:</label>
-                <select class="form-control" id="condition" name="condition" onmouseover="showTooltip(this, 'Select the condition of the book.')">
-                    <option value="new">New</option>
-                    <option value="good">Good</option>
-                    <option value="worn">Worn</option>
+                <select class="form-control" id="condition" name="condition">
+                    <option value="New">New</option>
+                    <option value="Good">Good</option>
+                    <option value="Worn">Worn</option>
                 </select>
             </div>
             <div class="form-group">

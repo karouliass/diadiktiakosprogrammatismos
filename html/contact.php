@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <ul class="nav navbar-nav">
                     <li><a href="./index.php">Home</a></li>
                     <li>
-                        <form class="navbar-form" method="GET" action="search.php">
+                        <form class="navbar-form" method="GET" action="search_books.php">
                             <div class="form-group">
                                 <label for="search-bar" class="sr-only">Search</label>
                                 <input 

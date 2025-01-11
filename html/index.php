@@ -27,31 +27,37 @@ if (isset($_GET['query'])) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">e-Books</a>
+    <!-- Navbar -->
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <!-- Brand/logo -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">e-Books</a>
+                </div>
+                <!-- Navigation links -->
+                <ul class="nav navbar-nav">
+                    <li><a href="./index.php"><strong>Home</strong></a></li>
+                    <li>
+                        <form class="navbar-form" method="GET" action="search_books.php">
+                            <div class="form-group">
+                                <label for="search-bar" class="sr-only">Search</label>
+                                <input 
+                                    type="text" 
+                                    id="search-bar" 
+                                    name="query"
+                                    class="form-control" 
+                                    placeholder="Search here">
+                            </div>
+                            <button type="submit" class="btn btn-default">Search</button>
+                        </form>
+                    </li>
+                    <li><a href="./lend_book.php">Lend Book</a></li>
+                    <li><a href="./return_book.php">Return Book</a></li>
+                    <li><a href="./insert_book.php">Insert Book</a></li>
+                    <li><a href="./contact.php" class="active">Contact Us</a></li>
+                </ul>
             </div>
-            <ul class="nav navbar-nav">
-                <li><a href="./index.php"><strong>Home</strong></a></li>
-                <li>
-                    <form class="navbar-form navbar-left" action="index.php" method="GET">
-                        <input 
-                            type="text" 
-                            name="query" 
-                            class="form-control" 
-                            placeholder="Search here" 
-                            style="margin-top: 8px; margin-left: 10px; display: inline-block; width: auto;">
-                        <button type="submit" class="btn btn-default" style="margin-top: 8px;">Search</button>
-                    </form>
-                </li>
-                <li><a href="./lend_book.php">Lend Book</a></li>
-                <li><a href="./return_book.php">Return Book</a></li>
-                <li><a href="./insert_book.php">Insert Book</a></li>
-                <li><a href="./contact.php">Contact Us</a></li>
-            </ul>
-        </div>
-    </nav>
+        </nav>
 
     <div class="container">
         <h2>Best Sellers</h2>

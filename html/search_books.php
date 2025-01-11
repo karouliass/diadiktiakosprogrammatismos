@@ -35,28 +35,34 @@ $conn->close();
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <!-- Brand/logo -->
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">e-Books</a>
+            <div class="container-fluid">
+                <!-- Brand/logo -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">e-Books</a>
+                </div>
+                <!-- Navigation links -->
+                <ul class="nav navbar-nav">
+                    <li><a href="./index.php">Home</a></li>
+                    <li>
+                        <form class="navbar-form" method="GET" action="search_books.php">
+                            <div class="form-group">
+                                <label for="search-bar" class="sr-only">Search</label>
+                                <input 
+                                    type="text" 
+                                    id="search-bar" 
+                                    name="query"
+                                    class="form-control" 
+                                    placeholder="Search here">
+                            </div>
+                            <button type="submit" class="btn btn-default">Search</button>
+                        </form>
+                    </li>
+                    <li><a href="./lend_book.php">Lend Book</a></li>
+                    <li><a href="./return_book.php">Return Book</a></li>
+                    <li><a href="./insert_book.php">Insert Book</a></li>
+                    <li><a href="./contact.php" class="active"><strong>Contact Us</strong></a></li>
+                </ul>
             </div>
-            <!-- Navigation links -->
-            <ul class="nav navbar-nav">
-                <li><a href="./index.html">Home</a></li>
-                <li>
-                    <input 
-                        type="text" 
-                        class="form-control navbar-input" 
-                        placeholder="Search here" 
-                        style="margin-top: 8px; margin-left: 10px; display: inline-block; width: auto;">
-                </li>
-                <li><a href="./lend_book.html">Lend Book</a></li>
-                <li><a href="./return_book.html">Return Book</a></li>
-                <li><a href="./insert_book.html">Insert Book</a></li>
-                <li><a href="./contact.html">Contact Us</a></li>
-            </ul>
-        </div>
-    </nav>
+        </nav>
 
-    
 </body>

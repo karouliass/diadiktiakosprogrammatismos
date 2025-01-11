@@ -1,4 +1,4 @@
-function validateForm() {
+export function validateForm() {
     const title = document.getElementById("title").value.trim();
     const year = document.getElementById("year").value;
     const copies = document.getElementById("copies").value;
@@ -19,7 +19,7 @@ function validateForm() {
     return true; // Allow form submission
 }
 
-function clearForm() {
+export function clearForm() {
     document.getElementById("insertBookForm").reset();
     document.getElementById("categories").selectedIndex = -1; // Deselect categories
 }

@@ -3,27 +3,36 @@ include 'db_connect.php';
 
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the book ID and borrower details (assuming these are part of the form)
-    $bookID = intval($_POST['book_id']);  // Ensure the book ID is an integer
-    $borrowerName = $conn->real_escape_string(trim($_POST['borrower_name']));
+    $title = $conn->real_escape_string(trim($_POST['Title'])); // Use the Title field as input
+    $borrowerName = $conn->real_escape_string(trim($_POST['borrower_name'])); // Borrower name
 
     // Validate inputs
-    if (empty($bookID) || empty($borrowerName)) {
-        $error = "Book ID and borrower name are required.";
+    if (empty($title) || empty($borrowerName)) {
+        $error = "Book Title and borrower name are required.";
     } else {
-        // Update the book status in the database (assuming a 'Borrowed' status)
-        $sql = "UPDATE Book SET Status = 'Borrowed' WHERE BookID = $bookID";
-        
-        if ($conn->query($sql) === TRUE) {
-            $success = "Book successfully borrowed by $borrowerName.";
-        } else {
-            $error = "Error borrowing book: " . $conn->error;
+        // Check if the book is available
+        $checkQuery = "SELECT * FROM Book WHERE Title = '$title' AND NumberOfCopies > 0";
+        $result = $conn->query($checkQuery);
+
+        if ($result && $result->num_rows > 0) {
+            $book = $result->fetch_assoc();
+            $bookID = $book['BookID'];
+            // Update the book's status and decrement copies
+            $updateQuery = "UPDATE Book SET NumberOfCopies = NumberOfCopies - 1 WHERE BookID = $bookID";
+            $result = $conn->query($updateQuery);
+            $borrowerInfo = 'INSERT INTO contacts (Name, Role) VALUES ($borrowerName, "Guest")';
+            $borrowResult = $conn->query($borrowerInfo);
+            if ($result===TRUE ) {
+                $success = "Book successfully borrowed by $borrowerName./nReturn Date: In two weeks!";
+            } else {
+                $error = "Error borrowing book: " . $conn->error;
+            }
+
         }
     }
 }
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,10 +50,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <ul class="nav navbar-nav">
                 <li><a href="./index.php">Home</a></li>
+                <li>
+                    <form class="navbar-form" method="GET" action="search_books.php">
+                        <div class="form-group">
+                            <label for="search-bar" class="sr-only">Search</label>
+                            <input 
+                                type="text" 
+                                id="search-bar" 
+                                name="query"
+                                class="form-control" 
+                                placeholder="Search here">
+                        </div>
+                        <button type="submit" class="btn btn-default">Search</button>
+                    </form>
+                </li>
                 <li><a href="./lend_book.php"><strong>Lend Book</strong></a></li>
                 <li><a href="./return_book.php">Return Book</a></li>
                 <li><a href="./insert_book.php">Insert Book</a></li>
-                <li><a href="./contact.php">Contact Us</a></li>
+                <li><a href="./contact.php" class="active">Contact Us</a></li>
             </ul>
         </div>
     </nav>
@@ -52,19 +75,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container">
         <?php if (isset($success)): ?>
             <div class="alert alert-success">
-                <?php echo $success; ?>
+                <?= htmlspecialchars($success) ?>
             </div>
         <?php elseif (isset($error)): ?>
             <div class="alert alert-danger">
-                <?php echo $error; ?>
+                <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
 
-        <!-- Book lending form -->
+        <!-- Book Lending Form -->
         <form method="POST" action="lend_book.php">
             <div class="form-group">
-                <label for="book_id">Book ID:</label>
-                <input type="number" class="form-control" id="book_id" name="book_id" required>
+                <label for="Title">Book Title:</label>
+                <input type="text" class="form-control" id="Title" name="Title" required>
             </div>
             <div class="form-group">
                 <label for="borrower_name">Borrower Name:</label>
