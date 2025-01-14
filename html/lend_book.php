@@ -3,12 +3,13 @@ include 'db_connect.php';
 
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = $conn->real_escape_string(trim($_POST['Title']));
-    $borrowerName = $conn->real_escape_string(trim($_POST['borrower_name']));
+    $title = isset($_POST['title']) ? 
+    $conn->real_escape_string(trim($_POST['title'])) : '';
+    $borrowerName = isset($_POST['borrower_name']) ? $conn->real_escape_string(trim($_POST['borrower_name'])) : '';
 
     // Validate inputs
     if (empty($title) || empty($borrowerName)) {
-        $error = "Book Title and borrower name are required.";
+        $error = "Book Title and borrower Name are required.";
     } else {
         // Check if the book is available
         $checkQuery = "SELECT * FROM Book WHERE Title = '$title' AND NumberOfCopies > 0";
@@ -26,14 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $conn->query($updateQuery);
 
                 // Insert borrower information
-                $borrowerInfo = "INSERT INTO contacts (Name, Role) VALUES ('$borrowerName', 'Guest')";
+                $borrowerInfo = "INSERT INTO contacts (Name, Role) VALUES ('$borrowerName', 'Borrower')";
                 $borrowResult = $conn->query($borrowerInfo);
                 $contactId = $conn->insert_id;
                 // Calculate return date
                 $returnDate = date('Y-m-d', strtotime('+2 weeks'));
-                $success = "Book successfully borrowed by $borrowerName. Return Date: $contactId.";
+                $success = "Book successfully borrowed by $borrowerName. Return Date: $returnDate.";
 
-                $borrowInfo = "INSERT INTO borrow (BookID, contactId, ReturnDate) VALUES ($bookID, '$contactId','$borrowerName', '$returnDate')";
+                $borrowInfo = "INSERT INTO borrow (BookID, contactId, ReturnDate) VALUES ($bookID, '$contactId', '$returnDate')";
                 $borrowResult = $conn->query($borrowInfo);
                 $conn->commit();
             } catch (Exception $e) {
@@ -99,8 +100,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Book Lending Form -->
         <form method="POST" action="lend_book.php">
             <div class="form-group">
-                <label for="Title">Book Title:</label>
-                <input type="text" class="form-control" id="Title" name="Title" required>
+                <label for="title">Book Title:</label>
+                <input type="text" class="form-control" id="title" name="title" required>
             </div>
             <div class="form-group">
                 <label for="borrower_name">Borrower Name:</label>

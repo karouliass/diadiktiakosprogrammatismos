@@ -1,3 +1,41 @@
+<?php
+include 'db_connect.php';
+
+// Check if the form has been submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $title = $conn->real_escape_string(trim($_POST['book_title']));
+    $borrowerName = $conn->real_escape_string(trim($_POST['borrower_name']));
+
+    // Validate inputs
+    if (empty($title) || empty($borrowerName)) {
+        $error = "Book Title and borrower Name are required.";
+    } else {
+        // Check if the book is available
+        $checkQuery = "SELECT * FROM Book WHERE Title = '$title'";
+        $result = $conn->query($checkQuery);
+
+        if ($result && $result->num_rows > 0) {
+            $book = $result->fetch_assoc();
+            $bookID = $book['BookID'];
+
+            // Transaction to ensure consistency
+            $conn->begin_transaction();
+            try {
+                // Decrement book copies
+                $updateQuery = "UPDATE Book SET NumberOfCopies = NumberOfCopies + 1 WHERE BookID = $bookID";
+                $conn->query($updateQuery);
+                $conn->commit();
+            } catch (Exception $e) {
+                $conn->rollback();
+                $error = "Error returning book: " . $conn->error;
+            }
+        } else {
+            $error = "Error returning book: ";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,10 +89,10 @@
         <?php endif; ?>
 
         <!-- Book lending form -->
-        <form method="POST" action="lend_book.php">
+        <form method="POST" action="return_book.php">
             <div class="form-group">
-                <label for="book_id">Book ID:</label>
-                <input type="number" class="form-control" id="book_id" name="book_id" required>
+                <label for="book_title">Book Title:</label>
+                <input type="text" class="form-control" id="book_title" name="book_title" required>
             </div>
             <div class="form-group">
                 <label for="borrower_name">Borrower Name:</label>
