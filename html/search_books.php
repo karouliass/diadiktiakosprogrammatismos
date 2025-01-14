@@ -29,8 +29,6 @@ $conn->close();
     <title>Search page</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
-
 </head>
 <body>
     <!-- Navbar -->
@@ -60,7 +58,7 @@ $conn->close();
                     <li><a href="./lend_book.php">Lend Book</a></li>
                     <li><a href="./return_book.php">Return Book</a></li>
                     <li><a href="./insert_book.php">Insert Book</a></li>
-                    <li><a href="./contact.php" class="active"><strong>Contact Us</strong></a></li>
+                    <li><a href="./contact.php" class="active">Contact Us</a></li>
                 </ul>
             </div>
         </nav>

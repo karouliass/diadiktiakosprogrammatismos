@@ -9,10 +9,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $condition = $_POST["condition"];
     $categories = isset($_POST["categories"]) ? $_POST["categories"] : []; // Ensure categories exist
 
-    // Validate input
-    if (empty($title) || empty($description) || $year < 1900 || $year > 2024 || $copies <= 0 || empty($categories) || $categories < 4 ) {
-        $error = "Invalid form data. Please check your inputs.";
-        header("Location: insert_book.php?error=" . urlencode($error));
+    $errors = [];
+
+    // Validate inputs and add specific error messages
+    if (empty($title)) {
+        $errors[] = "Title is required.";
+    }
+    if (empty($description)) {
+        $errors[] = "Description is missing.";
+    }
+    if ($year < 1900 || $year > 2024) {
+        $errors[] = "Year must be between 1900 and 2024.";
+    }
+    if ($copies <= 0) {
+        $errors[] = "Number of copies must be greater than 0.";
+    }
+    if (empty($categories) || count($categories) < 1 || count($categories) > 3) {
+        $errors[] = "You must select between 1 and 3 categories.";
+    }
+
+    // If errors exist, redirect back with the error messages
+    if (!empty($errors)) {
+        $error_message = implode(" ", $errors); // Combine errors into a single string
+        header("Location: insert_book.php?error=" . urlencode($error_message));
         exit;
     }
 
@@ -49,6 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -124,25 +144,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="condition">Condition:</label>
                 <select class="form-control" id="condition" name="condition">
                     <option value="New">New</option>
-                    <option value="Good">Good</option>
-                    <option value="Worn">Worn</option>
+                    <option value="Used">Used</option>
+                    <option value="Unknown">Unknown</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Categories:</label>
                 <div class="checkbox">
-                    <label><input type="checkbox" name="categories[]" value="1"> Fiction</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" name="categories[]" value="2"> Non-Fiction</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" name="categories[]" value="3"> Science</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" name="categories[]" value="4"> History</label>
-                </div>
-            </div>
+            <label><input type="checkbox" name="categories[]" value="1"> Fiction</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="categories[]" value="2"> Non-Fiction</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="categories[]" value="3"> Science</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="categories[]" value="4"> History</label>
+        </div>
+</div>
+
             <button type="submit" class="btn btn-primary">Insert Book</button>
         </form>
     </div>
