@@ -3,50 +3,58 @@ include 'db_connect.php';
 
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = isset($_POST['title']) ? 
-    $conn->real_escape_string(trim($_POST['title'])) : '';
+    // Get form inputs
+    $title = isset($_POST['title']) ? $conn->real_escape_string(trim($_POST['title'])) : '';
     $borrowerName = isset($_POST['borrower_name']) ? $conn->real_escape_string(trim($_POST['borrower_name'])) : '';
 
     // Validate inputs
     if (empty($title) || empty($borrowerName)) {
-        $error = "Book Title and borrower Name are required.";
+        $error = "Book Title and Borrower Name are required.";
     } else {
-        // Check if the book is available
-        $checkQuery = "SELECT * FROM Book WHERE Title = '$title' AND NumberOfCopies > 0";
+        // Check if the book is available (at least one copy)
+        $checkQuery = "SELECT * FROM `book` WHERE `Title` = '$title' AND `NumberOfCopies` > 0";
         $result = $conn->query($checkQuery);
 
         if ($result && $result->num_rows > 0) {
             $book = $result->fetch_assoc();
             $bookID = $book['BookID'];
 
-            // Transaction to ensure consistency
+            // Begin a transaction for consistency
             $conn->begin_transaction();
             try {
-                // Decrement book copies
-                $updateQuery = "UPDATE Book SET NumberOfCopies = NumberOfCopies - 1 WHERE BookID = $bookID";
-                $conn->query($updateQuery);
+                // Decrease the number of available copies of the book
+                $updateQuery = "UPDATE `book` SET `NumberOfCopies` = `NumberOfCopies` - 1 WHERE `BookID` = $bookID";
+                if (!$conn->query($updateQuery)) {
+                    throw new Exception("Error updating book copies: " . $conn->error);
+                }
 
-                // Insert borrower information
-                $borrowerInfo = "INSERT INTO contacts (Name, Role) VALUES ('$borrowerName', 'Borrower')";
-                $borrowResult = $conn->query($borrowerInfo);
-                $contactId = $conn->insert_id;
-                // Calculate return date
-                $returnDate = date('Y-m-d', strtotime('+2 weeks'));
-                $success = "Book successfully borrowed by $borrowerName. Return Date: $returnDate.";
+                // Insert borrow information directly with the borrower's name
+                // Since contactId is not used, we directly store the borrower's name in the 'borrow' table
+                $borrowInfo = "INSERT INTO `borrow` (`BookID`, `BorrowerName`, `ReturnDate`) VALUES ($bookID, '$borrowerName', NOW() + INTERVAL 2 WEEK)";
+                if (!$conn->query($borrowInfo)) {
+                    throw new Exception("Error inserting borrow information: " . $conn->error);
+                }
 
-                $borrowInfo = "INSERT INTO borrow (BookID, contactId, ReturnDate) VALUES ($bookID, '$contactId', '$returnDate')";
-                $borrowResult = $conn->query($borrowInfo);
+                // Commit the transaction
                 $conn->commit();
+                
+                // Success message, showing both the borrower's name and book's title
+                $returnDate = date('Y-m-d', strtotime('+2 weeks'));
+                $success = "Book '$title' successfully borrowed by $borrowerName. Return Date: $returnDate.";
             } catch (Exception $e) {
+                // Rollback if there's an error and show detailed error message
                 $conn->rollback();
-                $error = "Error borrowing book: " . $conn->error;
+                $error = "Error borrowing book: " . $e->getMessage();
             }
         } else {
-            $error = "Book is not available or does not exist.";
+            $error = "Book '$title' is not available or does not exist.";
         }
     }
 }
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

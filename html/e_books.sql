@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 15 Ιαν 2025 στις 23:46:21
+-- Χρόνος δημιουργίας: 16 Ιαν 2025 στις 02:14:13
 -- Έκδοση διακομιστή: 10.4.32-MariaDB
 -- Έκδοση PHP: 8.2.12
 
@@ -42,8 +42,8 @@ CREATE TABLE `book` (
 
 INSERT INTO `book` (`BookID`, `Title`, `Description`, `YearOfPublication`, `NumberOfCopies`, `cond`) VALUES
 (10, 'Το Γκρούφαλο', 'Το Γκρούφαλο description', '2003', 13, 'New'),
-(11, 'Βρες Με!', 'Βρες Με! description', '2010', 0, 'New'),
-(12, 'Κούκου τσα', 'Κούκου τσα description', '2000', 1, 'New');
+(11, 'Βρες Με!', 'Βρες Με! description', '2010', 12, 'New'),
+(12, 'Κούκου τσα', 'Κούκου τσα description', '2000', 20i, 'New');
 
 -- --------------------------------------------------------
 
@@ -75,7 +75,7 @@ INSERT INTO `bookcategory` (`BookID`, `CategoryID`) VALUES
 CREATE TABLE `borrow` (
   `BorrowID` int(11) NOT NULL,
   `BookID` int(11) DEFAULT NULL,
-  `contactId` int(11) NOT NULL,
+  `BorrowerName` varchar(100) NOT NULL,
   `ReturnDate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -83,11 +83,11 @@ CREATE TABLE `borrow` (
 -- Άδειασμα δεδομένων του πίνακα `borrow`
 --
 
-INSERT INTO `borrow` (`BorrowID`, `BookID`, `contactId`, `ReturnDate`) VALUES
-(1, 10, 21, '2025-01-28'),
-(2, 10, 22, '2025-01-28'),
-(3, 10, 23, '2025-01-28'),
-(4, 11, 24, '2025-01-28');
+INSERT INTO `borrow` (`BorrowID`, `BookID`, `BorrowerName`, `ReturnDate`) VALUES
+(1, 10, 'George', '2025-01-28'),
+(2, 10, 'Jim', '2025-01-28'),
+(3, 10, 'John', '2025-01-28'),
+(4, 11, 'Peter', '2025-01-28');
 
 -- --------------------------------------------------------
 
@@ -131,7 +131,7 @@ CREATE TABLE `contactmessages` (
 --
 
 INSERT INTO `contactmessages` (`MessageID`, `Name`, `Email`, `Message`, `SubmittedAt`) VALUES
-(1, 'Matias', 'matias@gmail.com', 'gia sas', '2025-01-15 22:07:28');
+(1, 'Matias', 'matias@gmail.com', 'gia sas', '2025-01-15 20:07:28');
 
 -- --------------------------------------------------------
 
@@ -152,12 +152,7 @@ CREATE TABLE `contacts` (
 INSERT INTO `contacts` (`ContactID`, `Name`, `Role`) VALUES
 (1, 'Theodoros Gkiliopoulos', 'TL20533'),
 (2, 'Pavlos Antwnidakhs', 'TL20483'),
-(3, 'Panagiwths Kouzhs', 'TL20411'),
-(21, 'τεπο', 'Guest'),
-(22, 'τεπο', 'Guest'),
-(23, 'σδγ', 'Guest'),
-(24, 'πανοσ', 'Guest'),
-(35, 'Matias', 'Up and coming employee');
+(3, 'Panagiwths Kouzhs', 'TL20411');
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
@@ -174,15 +169,14 @@ ALTER TABLE `book`
 --
 ALTER TABLE `bookcategory`
   ADD PRIMARY KEY (`BookID`,`CategoryID`),
-  ADD KEY `CategoryID` (`CategoryID`);
+  ADD KEY `bookcategory_ibfk_2` (`CategoryID`);
 
 --
 -- Ευρετήρια για πίνακα `borrow`
 --
 ALTER TABLE `borrow`
   ADD PRIMARY KEY (`BorrowID`),
-  ADD KEY `borrow_ibfk_1` (`BookID`),
-  ADD KEY `contactId` (`contactId`);
+  ADD KEY `borrow_ibfk_1` (`BookID`);
 
 --
 -- Ευρετήρια για πίνακα `category`
@@ -211,13 +205,13 @@ ALTER TABLE `contacts`
 -- AUTO_INCREMENT για πίνακα `book`
 --
 ALTER TABLE `book`
-  MODIFY `BookID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `BookID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT για πίνακα `borrow`
 --
 ALTER TABLE `borrow`
-  MODIFY `BorrowID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `BorrowID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT για πίνακα `category`
@@ -252,8 +246,7 @@ ALTER TABLE `bookcategory`
 -- Περιορισμοί για πίνακα `borrow`
 --
 ALTER TABLE `borrow`
-  ADD CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `borrow_ibfk_2` FOREIGN KEY (`contactId`) REFERENCES `contacts` (`ContactID`);
+  ADD CONSTRAINT `borrow_ibfk_1` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
