@@ -43,7 +43,7 @@ CREATE TABLE `book` (
 INSERT INTO `book` (`BookID`, `Title`, `Description`, `YearOfPublication`, `NumberOfCopies`, `cond`) VALUES
 (10, 'Το Γκρούφαλο', 'Το Γκρούφαλο description', '2003', 13, 'New'),
 (11, 'Βρες Με!', 'Βρες Με! description', '2010', 12, 'New'),
-(12, 'Κούκου τσα', 'Κούκου τσα description', '2000', 20i, 'New');
+(12, 'Κούκου τσα', 'Κούκου τσα description', '2000', 20, 'New');
 
 -- --------------------------------------------------------
 
