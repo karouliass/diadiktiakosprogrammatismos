@@ -151,16 +151,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group">
                 <label>Categories:</label>
                 <div class="checkbox">
-            <label><input type="checkbox" name="categories[]" value="1"> Fiction</label>
+            <label><input type="checkbox" name="categories[]" value="1"> Children Books</label>
         </div>
         <div class="checkbox">
-            <label><input type="checkbox" name="categories[]" value="2"> Non-Fiction</label>
+            <label><input type="checkbox" name="categories[]" value="2"> Romance</label>
         </div>
         <div class="checkbox">
-            <label><input type="checkbox" name="categories[]" value="3"> Science</label>
+            <label><input type="checkbox" name="categories[]" value="3"> Comedy</label>
         </div>
         <div class="checkbox">
-            <label><input type="checkbox" name="categories[]" value="4"> History</label>
+            <label><input type="checkbox" name="categories[]" value="4"> Philosophy</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="categories[]" value="5"> Drama</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="categories[]" value="6"> Other</label>
         </div>
 </div>
 
